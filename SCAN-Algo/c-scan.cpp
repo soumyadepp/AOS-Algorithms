@@ -9,6 +9,7 @@ class CScanAlgorithm{
     int minService;
     int totalTracks;
     bool direction;
+    int currentTrackHead;
     public:
     CScanAlgorithm(vector<int>input,int currentTrack,int total,bool dir){
         maxService = *max_element(input.begin(),input.end());
@@ -26,19 +27,22 @@ class CScanAlgorithm{
             while(inputs.size()){
                 if(direction){
                     int j = currentPosition;
-                    for(j = currentPosition ; j < maxService; j++){
+                    for(j = currentPosition ; j < totalTracks; j++){
                         if(inputs.find(j) != inputs.end()){
                             cout << "Servicing input " << j << endl;
                             inputs.erase(j);
                         }
                     }
-                    while(j >= minService){
-                        if(inputs.find(j) != inputs.end()){
-                            cout << "Servicing input " << j << endl;
-                            inputs.erase(j); 
-                        }
+                    while(j >= 0){
                         j--;
                     }
+                    for( ; j < totalTracks && inputs.size(); j++){
+                        if(inputs.find(j) != inputs.end()){
+                            cout << "Servicing input " << j << endl;
+                            inputs.erase(j);
+                        }
+                    }
+                    currentTrackHead = j;
                 }
             else{
                 int j = currentPosition;
@@ -49,23 +53,26 @@ class CScanAlgorithm{
                     }
                     j--;
                 }
-                for(j = 0 ; j < maxService; j++){
+                for(;j < totalTracks; j++);
+                while(j >= 0 && inputs.size()){
                     if(inputs.find(j) != inputs.end()){
                         cout << "Servicing input " << j << endl;
                         inputs.erase(j);
                     }
+                    j--;
                 }
+                currentTrackHead = j;
             }   
         }
     }
     int calculateDistance(){
-        if(direction) return maxService - currentPosition + (maxService - minService);
-        return (currentPosition - minService) + (maxService - minService);
+        if(direction) return maxService - currentPosition + totalTracks + currentTrackHead;
+        return (currentPosition - minService) + totalTracks + currentTrackHead;
     }
 };
 
 int main(){
-    vector<int>inputs = {53,95,193,64,24,16,40};
+    vector<int>inputs = {176, 79, 34, 60, 92, 11, 41, 114};
     int currentPosition = 50;
     int total = 200;
     bool direction = true;
