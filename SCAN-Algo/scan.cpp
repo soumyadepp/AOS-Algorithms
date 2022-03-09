@@ -5,6 +5,7 @@ using namespace std;
 class ScanAlgorithm{
     unordered_set<int>inputs;
     int currentPosition;
+    int currentTrackHead;
     int maxService;
     int minService;
     int totalTracks;
@@ -26,30 +27,36 @@ class ScanAlgorithm{
             while(inputs.size()){
                 if(direction){
                     int j = currentPosition;
-                    for(j = currentPosition ; j < totalTracks; j++){
+                    currentTrackHead = currentPosition;
+                    for(j = currentPosition ; j < totalTracks; j++,currentTrackHead++){
                         if(inputs.find(j) != inputs.end()){
                             cout << "Servicing input " << j << endl;
                             inputs.erase(j);
                         }
                     }
                     while(j >= 0){
-                        if(inputs.find(j) != inputs.end()){
-                            cout << "Servicing input " << j << endl;
-                            inputs.erase(j); 
-                        }
                         j--;
+                        currentTrackHead--;
+                    }
+                    for(j = 0 ; j < totalTracks && inputs.size(); j++,currentTrackHead++){
+                        if(inputs.find(j) != inputs.end()){
+                            cout << "Servicing Input " << j << endl;
+                            inputs.erase(j);
+                        }
                     }
                 }
             else{
+                currentTrackHead = currentPosition;
                 int j = currentPosition;
                 while(j >= 0){
                     if(inputs.find(j) != inputs.end()){
                         cout << "Servicing input " << j << endl;
                         inputs.erase(j);
                     }
+                    currentTrackHead--;
                     j--;
                 }
-                for(j = 0 ; j < totalTracks; j++){
+                for(j = 0 ; j < totalTracks; j++,currentTrackHead++){
                     if(inputs.find(j) != inputs.end()){
                         cout << "Servicing input " << j << endl;
                         inputs.erase(j);
@@ -59,15 +66,15 @@ class ScanAlgorithm{
         }
     }
     int calculateDistance(){
-        if(direction) return totalTracks - currentPosition + totalTracks;
+        if(direction) return totalTracks - currentPosition + totalTracks + currentTrackHead;
         return currentPosition + totalTracks;
     }
 };
 
 int main(){
-    vector<int>inputs = {53,95,193,64,24,16,40};
+    vector<int>inputs = {176, 79, 34, 60, 92, 11, 41, 114};
     int currentPosition = 50;
-    int total = 200;
+    int total = 199;
     bool direction = true;
     ScanAlgorithm sc(inputs,currentPosition,total,direction);
     sc.runScan();
